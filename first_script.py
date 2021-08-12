@@ -102,7 +102,14 @@ def elliptic_curve_addition(self, other: Point) -> Point:
     # P + (-P) = 0
     if self.x == other.x and self.y != other.y:
         return INF
+    #compute the "slope"
+    if self.x == other.x:
+        m = (3*self.x**2 + self.curve.a)**inv(2*self.y, self.curve.p)
+    else:
+        m = (self.y - other.y) * inv(self.x - other.x, self.curve.p)
+    #compute the new point
+    rx = (m**2 - self.x - other.x) % self.curve.p
+    ry = (-(m*(rm - self.x) + self.y)) % self.curve.p
+    return Point(self.curve, rx, ry)
 
-
-
-  
+Point.__add__ = elliptic_curve_addition
